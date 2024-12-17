@@ -1,0 +1,116 @@
+.home-container {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2, h3 {
+    color: #0056b3;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  p {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+  
+  .home-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+  }
+  
+  .btn-primary, .btn-secondary, .btn-view, .btn-danger {
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-primary {
+    background-color: #007bff;
+  }
+  
+  .btn-secondary {
+    background-color: #17a2b8;
+  }
+  
+  .btn-view {
+    background-color: #28a745;
+  }
+  
+  .btn-danger {
+    background-color: #dc3545;
+  }
+  
+  .btn-primary:hover, .btn-secondary:hover, .btn-view:hover, .btn-danger:hover {
+    filter: brightness(0.9);
+  }
+  
+  .rank-table, .user-evals-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  
+  .rank-table th, .user-evals-table th {
+    background-color: #007bff;
+    color: white;
+    padding: 12px;
+    text-align: center;
+  }
+  
+  .rank-table td, .user-evals-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: center;
+  }
+  
+  .rank-table tr:nth-child(even), .user-evals-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+  }
+  
+  .rank-table tr:hover, .user-evals-table tr:hover {
+    background-color: #e9f5ff;
+  }
+  
+  .btn-delete {
+    background-color: #dc3545;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    margin-left: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-delete:hover {
+    background-color: #c82333;
+  }
+  
+  .btn-view {
+    background-color: #28a745;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .btn-view:hover {
+    background-color: #218838;
+  }
+  

@@ -1,0 +1,101 @@
+/* Estilização Geral */
+.relatorio-container {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #333;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  
+  h2, h3 {
+    text-align: center;
+    color: #0056b3;
+    margin-bottom: 15px;
+  }
+  
+  .chart-container {
+    margin: 20px auto;
+    max-width: 800px;
+  }
+  
+  /* Tabelas */
+  .relatorio-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 30px;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .relatorio-table th {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px;
+    text-align: left;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
+  
+  .relatorio-table td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .relatorio-table tr:nth-child(even) {
+    background-color: #f4f4f4;
+  }
+  
+  .relatorio-table tr:hover {
+    background-color: #e9f5ff;
+  }
+  
+  /* Títulos dos critérios na tabela de subcritérios */
+  .relatorio-table th[colspan="3"] {
+    background-color: #0056b3;
+    color: #fff;
+    font-size: 1.1em;
+    text-align: center;
+  }
+  
+  /* Botões de Exportação */
+  .export-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+  }
+  
+  .export-buttons button {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .export-buttons button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Destaque para Notas Finais */
+  .nota-final {
+    font-weight: bold;
+    color: #28a745;
+    text-align: center;
+  }
+  
+  h3 {
+    margin-top: 30px;
+    text-align: center;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 10px;
+    display: inline-block;
+  }
+  
