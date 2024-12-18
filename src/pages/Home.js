@@ -7,6 +7,8 @@ const Home = ({ user, handleLogout }) => {
   const [rankings, setRankings] = useState([]); // Estado para o ranking geral dos frameworks
   const [userEvaluations, setUserEvaluations] = useState([]); // Estado para avaliações do usuário
   const navigate = useNavigate();
+  
+
 
   // Carrega os rankings gerais e as avaliações do usuário do banco de dados
   useEffect(() => {
@@ -100,32 +102,36 @@ const Home = ({ user, handleLogout }) => {
   }, [user.id]); // Adiciona o ID do usuário como dependência
   
   
+    // Verifica se o usuário é um admin
+    const isAdmin = user?.role === 1;
   
-  
 
-  // Função para deletar uma avaliação
-  const deleteEvaluation = async (evaluationId) => {
-    if (window.confirm('Are you sure you want to delete this evaluation?')) {
-      try {
-        const { error } = await supabase
-          .from('avaliacoes')
-          .delete()
-          .eq('id', evaluationId);
+// Função para deletar a avaliação
+const deleteEvaluation = async (evaluationId) => {
+  console.log('Deleting evaluation with ID:', evaluationId);  // Verifique o ID
+  if (window.confirm('Are you sure you want to delete this evaluation?')) {
+    try {
+      const { error } = await supabase
+        .from('avaliacoes')
+        .delete()
+        .eq('id', evaluationId); // Certifique-se de que o 'id' está correto no Supabase
 
-        if (error) throw error;
+      if (error) throw error; // Se houver erro no Supabase, ele será lançado aqui
 
-        // Atualiza o estado removendo a avaliação deletada
-        setUserEvaluations((prev) =>
-          prev.filter((evaluation) => evaluation.id !== evaluationId)
-        );
+      // Atualiza o estado local removendo a avaliação deletada
+      setUserEvaluations((prevEvaluations) =>
+        prevEvaluations.filter((evaluation) => evaluation.id !== evaluationId)
+      );
 
-        alert('Evaluation successfully deleted.');
-      } catch (err) {
-        console.error('Error deleting evaluation:', err.message);
-        alert('Failed to delete evaluation. Try again.');
-      }
+      alert('Evaluation successfully deleted.');
+    } catch (err) {
+      console.error('Error deleting evaluation:', err.message);  // Log do erro
+      alert('Failed to delete evaluation. Try again.');
     }
-  };
+  }
+};
+
+
 
   return (
     <div className="home-container">
@@ -146,6 +152,12 @@ const Home = ({ user, handleLogout }) => {
             Explanation
         </button>
 
+        {/* Mostrar botão de Admin apenas para o Admin */}
+        {isAdmin && (
+          <button onClick={() => navigate('/admin')} className="btn-admin">
+            Go to Admin Panel
+          </button>
+        )}
 
 
         {/* Botão de Logout */}
