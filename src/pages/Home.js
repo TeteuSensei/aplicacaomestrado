@@ -7,7 +7,11 @@ const Home = ({ user, handleLogout }) => {
   const [rankings, setRankings] = useState([]); // Estado para o ranking geral dos frameworks
   const [userEvaluations, setUserEvaluations] = useState([]); // Estado para avaliações do usuário
   const navigate = useNavigate();
-  
+  // Função para redirecionar para a página de comparação
+  const handleGoToComparison = () => {
+  navigate('/comparacao'); // Altere '/comparacao' para o caminho da sua página de comparação
+};
+
 
 
   // Carrega os rankings gerais e as avaliações do usuário do banco de dados
@@ -158,6 +162,15 @@ const deleteEvaluation = async (evaluationId) => {
             Go to Admin Panel
           </button>
         )}
+
+        {/* Botão para acessar a página de comparação */}
+        <button 
+            onClick={() => navigate('/comparacaousuario')} 
+            className="btn-secondary"
+            >
+            Compare Frameworks
+        </button>
+
 
 
         {/* Botão de Logout */}
