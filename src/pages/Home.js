@@ -4,192 +4,211 @@ import { supabase } from '../services/supabase';
 import '../css/Home.css';
 
 const Home = ({ user, handleLogout }) => {
-  const [rankings, setRankings] = useState([]); // Estado para o ranking geral dos frameworks
-  const [userEvaluations, setUserEvaluations] = useState([]); // Estado para avaliações do usuário
+  const [rankings, setRankings] = useState([]); // Estado para rankings gerais
+  const [userEvaluations, setUserEvaluations] = useState([]); // Estado para avaliações individuais do usuário
+  const [uniqueFrameworks, setUniqueFrameworks] = useState([]); // Estado para frameworks únicos com médias
+
   const navigate = useNavigate();
 
-  // Carrega os rankings gerais e as avaliações do usuário do banco de dados
+  // Função para redirecionar para a página de comparação
+  const handleGoToComparison = () => {
+    navigate('/comparacaousuario'); // Altere '/comparacao' para o caminho da sua página de comparação
+  };
+
+  // Função para carregar os dados de rankings e frameworks
   useEffect(() => {
-    const fetchFrameworkAverages = async () => {
+    const fetchFrameworkData = async () => {
       try {
-        // Etapa 1: Buscar critérios com a tabela de avaliações
+        // Buscar os dados de critérios
         const { data: criterios, error: criteriosError } = await supabase
           .from('criterios')
           .select('id, peso, avaliacao_id');
-  
         if (criteriosError) throw criteriosError;
-  
-        // Etapa 2: Buscar subcritérios relacionados aos critérios
+
+        // Buscar os dados de subcritérios
         const { data: subcriterios, error: subcriteriosError } = await supabase
           .from('subcriterios')
           .select('id, nota, criterio_id');
-  
         if (subcriteriosError) throw subcriteriosError;
-  
-        // Etapa 3: Buscar avaliações (frameworks)
+
+        // Buscar as avaliações realizadas (frameworks)
         const { data: avaliacoes, error: avaliacoesError } = await supabase
           .from('avaliacoes')
           .select('id, nome_framework, data_avaliacao, usuarios (nome)');
-  
         if (avaliacoesError) throw avaliacoesError;
-  
-        // Combinar os dados localmente
-        const combinedData = avaliacoes.map((avaliacao) => {
+
+        // Combinar os dados para calcular as médias
+        const frameworkData = {}; // Objeto para armazenar frameworks agrupados
+        const allRankings = []; // Array para rankings gerais
+
+        avaliacoes.forEach((avaliacao) => {
+          // Filtrar critérios da avaliação
           const criteriosDaAvaliacao = criterios.filter(
             (criterio) => criterio.avaliacao_id === avaliacao.id
           );
-  
+
           let totalScore = 0;
           let totalWeight = 0;
-  
+
+          // Calcular notas ponderadas para cada critério
           criteriosDaAvaliacao.forEach((criterio) => {
             const subcriteriosDoCriterio = subcriterios.filter(
               (sub) => sub.criterio_id === criterio.id
             );
-  
+
             const subScoreSum = subcriteriosDoCriterio.reduce(
               (sum, sub) => sum + parseFloat(sub.nota || 0),
               0
             );
-  
+
             const subAverage = subScoreSum / subcriteriosDoCriterio.length || 0;
-  
+
             totalScore += subAverage * (parseFloat(criterio.peso) || 1);
             totalWeight += parseFloat(criterio.peso) || 1;
           });
-  
-          const finalAverage = totalWeight > 0 ? (totalScore / totalWeight).toFixed(2) : '0.00';
-  
-          return {
+
+          const finalAverage = totalWeight > 0 ? totalScore / totalWeight : 0;
+
+          // Adicionar ao ranking geral
+          allRankings.push({
             frameworkName: avaliacao.nome_framework,
-            averageScore: parseFloat(finalAverage),
+            averageScore: finalAverage.toFixed(2),
             user: avaliacao.usuarios?.nome || 'Unknown',
             date: new Date(avaliacao.data_avaliacao).toLocaleDateString(),
-          };
+          });
+
+          // Agrupar frameworks para cálculo de médias únicas
+          if (!frameworkData[avaliacao.nome_framework]) {
+            frameworkData[avaliacao.nome_framework] = {
+              totalScore: finalAverage,
+              count: 1,
+            };
+          } else {
+            frameworkData[avaliacao.nome_framework].totalScore += finalAverage;
+            frameworkData[avaliacao.nome_framework].count += 1;
+          }
         });
-  
-        // Ordena os dados pelo averageScore em ordem decrescente
-        combinedData.sort((a, b) => b.averageScore - a.averageScore);
-  
-        setRankings(combinedData);
+
+        // Ordenar rankings gerais
+        allRankings.sort((a, b) => b.averageScore - a.averageScore);
+        setRankings(allRankings);
+
+        // Calcular médias para frameworks únicos
+        const aggregatedFrameworks = Object.entries(frameworkData).map(([name, data]) => ({
+          frameworkName: name,
+          averageScore: (data.totalScore / data.count).toFixed(2),
+        }));
+        setUniqueFrameworks(aggregatedFrameworks);
       } catch (err) {
-        console.error('Error calculating framework averages:', err.message);
+        console.error('Error fetching and processing data:', err.message);
       }
     };
-  
+
     const fetchUserEvaluations = async () => {
       try {
-        // Busca apenas as avaliações do usuário logado
+        // Buscar avaliações do usuário logado
         const { data, error } = await supabase
           .from('avaliacoes')
           .select('*')
           .eq('usuario_id', user.id);
-  
         if (error) throw error;
-  
-        setUserEvaluations(data); // Atualiza o estado com os dados do usuário
+
+        setUserEvaluations(data); // Atualizar estado com as avaliações do usuário
       } catch (err) {
         console.error('Error fetching user evaluations:', err.message);
       }
     };
-  
-    fetchFrameworkAverages();
+
+    fetchFrameworkData(); // Carregar dados de frameworks
     if (user?.id) {
-      fetchUserEvaluations();
+      fetchUserEvaluations(); // Carregar dados do usuário logado
     }
-  }, [user.id]); // Adiciona o ID do usuário como dependência
-  
-  
-  
-  
+  }, [user.id]);
 
-  // Função para deletar uma avaliação
-  const deleteEvaluation = async (evaluationId) => {
-    if (window.confirm('Are you sure you want to delete this evaluation?')) {
-      try {
-        const { error } = await supabase
-          .from('avaliacoes')
-          .delete()
-          .eq('id', evaluationId);
-
-        if (error) throw error;
-
-        // Atualiza o estado removendo a avaliação deletada
-        setUserEvaluations((prev) =>
-          prev.filter((evaluation) => evaluation.id !== evaluationId)
-        );
-
-        alert('Evaluation successfully deleted.');
-      } catch (err) {
-        console.error('Error deleting evaluation:', err.message);
-        alert('Failed to delete evaluation. Try again.');
-      }
-    }
-  };
+  const isAdmin = user?.role === 1; // Verificar se o usuário é administrador
 
   return (
     <div className="home-container">
       <h2>Welcome, {user.nome}!</h2>
       <p>Here you can efficiently manage and evaluate your frameworks.</p>
-
+  
       <div className="home-buttons">
-        {/* Botão para iniciar uma nova avaliação */}
         <button onClick={() => navigate('/setup')} className="btn-primary">
           Start New Evaluation
         </button>
-
-        {/* Botão para a página de explicação */}
-        <button 
-            onClick={() => navigate('/explanation')} 
-            className="btn-secondary"
-            >
-            Explanation
+        <button onClick={() => navigate('/explanation')} className="btn-secondary">
+          Explanation
         </button>
-
-
-
-        {/* Botão de Logout */}
+        {isAdmin && (
+          <button onClick={() => navigate('/admin')} className="btn-admin">
+            Go to Admin Panel
+          </button>
+        )}
+        <button onClick={handleGoToComparison} className="btn-secondary">
+          Compare Frameworks
+        </button>
         <button onClick={handleLogout} className="btn-danger">
           Logout
         </button>
       </div>
-
-      {/* Tabela com o ranking geral */}
+  
+      {/* Tabela de frameworks únicos com médias */}
       <h3>Overall Framework Rankings</h3>
-        <table className="rank-table">
+      <table className="frameworks-table">
         <thead>
-            <tr>
-            <th>Position</th>
+          <tr>
             <th>Framework</th>
-            <th>Average Score</th>
-            <th>User</th>
-            <th>Date</th>
-            </tr>
+            <th>e-CRF</th>
+          </tr>
         </thead>
         <tbody>
-            {rankings.length > 0 ? (
+          {uniqueFrameworks.length > 0 ? (
+            uniqueFrameworks.map((framework, index) => (
+              <tr key={index}>
+                <td>{framework.frameworkName}</td>
+                <td>{framework.averageScore}</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="2">No frameworks available.</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+  
+      {/* Tabela de rankings gerais */}
+      <h3>Assessors' Assessment</h3>
+      <table className="rank-table">
+        <thead>
+          <tr>
+            <th>Position</th>
+            <th>Framework</th>
+            <th>e-CRF</th>
+            <th>User</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rankings.length > 0 ? (
             rankings.map((framework, index) => (
-                <tr key={index}>
+              <tr key={index}>
                 <td>{index + 1}</td>
                 <td>{framework.frameworkName}</td>
                 <td>{framework.averageScore}</td>
                 <td>{framework.user}</td>
                 <td>{framework.date}</td>
-                </tr>
+              </tr>
             ))
-            ) : (
+          ) : (
             <tr>
-                <td colSpan="5">No rankings available.</td>
+              <td colSpan="5">No rankings available.</td>
             </tr>
-            )}
+          )}
         </tbody>
-        </table>
-
-
-
-
-
-      {/* Tabela com avaliações realizadas pelo usuário */}
+      </table>
+  
+      {/* Tabela de avaliações do usuário */}
       <h3>Your Evaluations</h3>
       <table className="user-evals-table">
         <thead>
@@ -206,36 +225,22 @@ const Home = ({ user, handleLogout }) => {
                 <td>{new Date(evaluation.data_avaliacao).toLocaleDateString()}</td>
                 <td>{evaluation.nome_framework}</td>
                 <td>
-                <button
+                  <button
                     onClick={() => {
-                        try {
-                        // Verifica se 'evaluation.dados' existe antes de prosseguir
+                      try {
                         if (!evaluation.dados) {
-                            throw new Error('No data available for this evaluation.');
+                          throw new Error('No data available for this evaluation.');
                         }
-
-                        // Faz o parse dos dados JSON salvos
                         const frameworksData = JSON.parse(evaluation.dados);
-
-                        // Redireciona para a página de relatório com os dados no state
                         navigate('/relatorio', { state: { frameworksData } });
-                        } catch (err) {
-                        // Loga o erro no console e exibe um alerta amigável ao usuário
+                      } catch (err) {
                         console.error('Invalid data format or missing data:', err.message);
                         alert('Unable to load the report. Data is invalid or missing.');
-                        }
+                      }
                     }}
                     className="btn-view"
-                    >
-                    View Report
-                    </button>
-
-
-                  <button
-                    onClick={() => deleteEvaluation(evaluation.id)}
-                    className="btn-delete"
                   >
-                    Delete
+                    View Report
                   </button>
                 </td>
               </tr>
@@ -249,6 +254,7 @@ const Home = ({ user, handleLogout }) => {
       </table>
     </div>
   );
+  
 };
 
 export default Home;

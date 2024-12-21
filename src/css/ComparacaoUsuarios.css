@@ -1,0 +1,152 @@
+/* Estilo geral */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f9;
+  color: #333;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  text-align: center;
+  margin: 20px 0;
+  color: #222;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Tabela de rankings */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+  text-align: left;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+
+table thead {
+  background-color: #007bff;
+  color: white;
+}
+
+table thead th {
+  padding: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+table tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+table th, table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Botão de comparação */
+button {
+  display: block;
+  margin: 20px auto;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Estilo da tabela de comparação */
+.comparison-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px auto;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+/* Cabeçalho da tabela */
+.comparison-table thead {
+  background-color: #28a745; /* Verde para destacar */
+  color: white;
+}
+
+.comparison-table thead th {
+  padding: 15px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #ddd;
+}
+
+/* Corpo da tabela */
+.comparison-table tbody td {
+  padding: 12px;
+  text-align: center;
+  font-size: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Alternância de cores nas linhas */
+.comparison-table tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.comparison-table tbody tr:nth-child(odd) {
+  background-color: #ffffff;
+}
+
+/* Destaque ao passar o mouse */
+.comparison-table tbody tr:hover {
+  background-color: #f1f1f1;
+  transition: background-color 0.3s;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .comparison-table thead th, .comparison-table tbody td {
+    font-size: 12px;
+    padding: 10px;
+  }
+}
+
+/* Bordas arredondadas na tabela */
+.comparison-container {
+  border-radius: 8px;
+  overflow: hidden;
+  background-color: #f8f9fa;
+  padding: 20px;
+  margin: 20px auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}

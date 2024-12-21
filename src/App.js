@@ -8,6 +8,8 @@ import Avaliacao from './pages/Avaliacao';
 import Relatorio from './pages/Relatorio';
 import Explanation from './pages/Explicacao';
 import AdminPanel from './pages/AdminPanel';
+import Compare from './pages/Comparacao';
+import CompareUser from './pages/ComparacaoUsuarios';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -50,6 +52,8 @@ function App() {
         <Route path="/signup" element={<Cadastro />} />
         <Route path="*" element={<Navigate to="/" />} />
         <Route path="/admin" element={<AdminPanel />} />
+        <Route path="/comparacao" element={<Compare />} />
+        <Route path="/comparacaousuario" element={<CompareUser />} />
 
       </Routes>
     </Router>
